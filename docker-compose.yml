@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: "ostock_db"
+      POSTGRES_USER: "myuser"
+      POSTGRES_PASSWORD: "mypassword"
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d ostock_db" ]
+      interval: 10s
+      retries: 5
+#      start_period: 30s
+      timeout: 10s
+    networks:
+      backend:
+        aliases:
+          - "postgres"
+
+  config-server:
+    # image: ostock/configserver:latest
+    build: ./config-server/
+    container_name: configServer
+    ports:
+      - "8888:8888"
+    #    environment:
+    #      ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
+    networks:
+      backend:
+        aliases:
+          - "config-server"
+
+  licensing-service:
+    build: ./licensing-service/
+    container_name: licensingService
+    # image: ostock/licensing-service:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+    networks:
+      backend:
+        aliases:
+          - "licensing-service"
+
+networks:
+  backend:
+    driver: bridge

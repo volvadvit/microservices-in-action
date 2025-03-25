@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: organizations
+
+server:
+  port: 8084

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    # Use only with file-system configuration service
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # To get configuration: http://localhost:8888/{application}-{profile}.yml
+          search-locations: classpath:/config/{application}
+
+server:
+  port: 8888
