@@ -27,7 +27,7 @@ class LicenseController(private val licenseService: LicenseService) {
                    @PathVariable("organizationId") organizationId: String,
                    @RequestHeader(value = "Accept-Language",required = false) locale: Locale?): ResponseEntity<License> {
 
-        val license = licenseService.getLicense(licenseId, organizationId)
+        val license = licenseService.getLicense(licenseId, organizationId, locale)
 
         // add HATEOAS links
         license.add(

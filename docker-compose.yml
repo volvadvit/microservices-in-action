@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres-container
+    container_name: postgres-dev
     environment:
       POSTGRES_DB: "ostock_db"
       POSTGRES_USER: "myuser"
@@ -11,7 +11,7 @@ services:
     expose:
       - "5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U myuser -d ostock_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 10s
       retries: 5
 #      start_period: 30s
@@ -24,11 +24,11 @@ services:
   config-server:
     # image: ostock/configserver:latest
     build: ./config-server/
-    container_name: configServer
+    container_name: config-server
     ports:
       - "8888:8888"
-    #    environment:
-    #      ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
+    environment:
+      ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
     networks:
       backend:
         aliases:
@@ -36,7 +36,7 @@ services:
 
   licensing-service:
     build: ./licensing-service/
-    container_name: licensingService
+    container_name: licensing-service
     # image: ostock/licensing-service:latest
     ports:
       - "8081:8081"

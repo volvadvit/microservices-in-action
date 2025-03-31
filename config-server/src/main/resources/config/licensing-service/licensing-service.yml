@@ -12,3 +12,6 @@ management:
       enabled: false
     diskspace:
       enabled: true
+
+test:
+  property: Hello world!
