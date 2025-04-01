@@ -1,6 +1,6 @@
 package com.volvadvit.license.repository
 
-import com.volvadvit.license.model.License
+import com.volvadvit.license.model.entity.License
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 

@@ -2,6 +2,8 @@ management:
   endpoints:
     web:
       base-path: /
+      exposure:
+        include: "*"
     enabled-by-default: false
   endpoint:
     health:
@@ -9,7 +11,7 @@ management:
       show-details: always
   health:
     db:
-      enabled: false
+      enabled: true
     diskspace:
       enabled: true
 

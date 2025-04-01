@@ -10,6 +10,9 @@ services:
       - "5432:5432"
     expose:
       - "5432"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./sql/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 10s
@@ -22,7 +25,6 @@ services:
           - "postgres"
 
   config-server:
-    # image: ostock/configserver:latest
     build: ./config-server/
     container_name: config-server
     ports:
@@ -34,10 +36,22 @@ services:
         aliases:
           - "config-server"
 
+  eureka-server:
+    build: ./eureka-server/
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      config-server:
+        condition: service_started
+    networks:
+      backend:
+        aliases:
+          - "eureka-server"
+
   licensing-service:
     build: ./licensing-service/
     container_name: licensing-service
-    # image: ostock/licensing-service:latest
     ports:
       - "8081:8081"
     environment:
@@ -47,10 +61,29 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+      eureka-server:
+        condition: service_started
     networks:
       backend:
         aliases:
           - "licensing-service"
+
+  organization-service:
+    build: ./organization-service/
+    container_name: organization-service
+    depends_on:
+#      postgres:
+#        condition: service_healthy
+      config-server:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    ports:
+      - "8084:8084"
+    networks:
+      backend:
+        aliases:
+          - "organization-service"
 
 networks:
   backend:

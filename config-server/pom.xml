@@ -34,12 +34,6 @@
             <artifactId>spring-cloud-config-server</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
 
         <!-- Kotlin -->
         <dependency>
@@ -69,12 +63,6 @@
                     <image>
                         <name>${docker.image.prefix}/${project.artifactId}:latest</name>
                     </image>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <!-- Kotlin Plugin -->

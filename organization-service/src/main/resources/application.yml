@@ -1,6 +1,10 @@
 spring:
   application:
-    name: organizations
-
-server:
-  port: 8084
+    name: organization-service
+  profiles:
+      active: dev
+  config:
+    import: 'optional:configserver:'
+  cloud:
+    config:
+      uri: http://config-server:8888

@@ -1,0 +1,12 @@
+server:
+  port: 8761
+
+eureka:
+#  instance:
+#    hostname: eureka-server
+  client:
+    registerWithEureka: false
+    # Disable caching from registry
+    fetchRegistry: false
+  server:
+#    waitTimeInMsWhenSyncEmpty: 2

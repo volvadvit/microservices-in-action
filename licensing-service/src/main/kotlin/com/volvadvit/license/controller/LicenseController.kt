@@ -1,8 +1,7 @@
 package com.volvadvit.license.controller
 
-import com.volvadvit.license.model.License
+import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.service.LicenseService
-import lombok.extern.slf4j.Slf4j
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.ResponseEntity
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.Locale
 
-@Slf4j
 @RestController
 @RequestMapping("v1/organization/{organizationId}/license")
 class LicenseController(private val licenseService: LicenseService) {
@@ -63,7 +61,7 @@ class LicenseController(private val licenseService: LicenseService) {
 
     @PostMapping
     fun createLicense(@PathVariable("organizationId") organizationId: String,
-                      @RequestBody request: License?,
+                      @RequestBody request: License,
                       @RequestHeader(value = "Accept-Language",required = false) locale: Locale?
     ): ResponseEntity<String> {
         return ResponseEntity.ok(
@@ -83,9 +81,17 @@ class LicenseController(private val licenseService: LicenseService) {
         return ResponseEntity.ok(
             licenseService.deleteLicense(
                 licenseId,
-                organizationId,
                 locale
             )
         )
+    }
+
+    @GetMapping("/{licenseId}/{clientType}")
+    fun getLicenseWithClient(@PathVariable("organizationId") organizationId: String,
+                             @PathVariable("licenseId") licenseId: String?,
+                             @PathVariable("clientType") clientType: String?,
+                             @RequestHeader(value = "Accept-Language",required = false) locale: Locale?
+    ): License {
+        return licenseService.getLicense(organizationId, licenseId, clientType)
     }
 }
