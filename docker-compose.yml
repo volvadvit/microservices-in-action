@@ -15,14 +15,32 @@ services:
       - ./sql/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
-      interval: 10s
+      interval: 5s
       retries: 5
-#      start_period: 30s
+      start_period: 10s
       timeout: 10s
     networks:
       backend:
         aliases:
           - "postgres"
+
+  redis:
+    image: redis:latest
+    container_name: redis-dev
+    restart: always
+    ports:
+      - "6379:6379"
+#    volumes:
+#      - ./redis/dаta:/root/redis
+#      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=mypassword
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=2
+    networks:
+      backend:
+        aliases:
+          - "redis"
 
   config-server:
     build: ./config-server/
@@ -31,6 +49,12 @@ services:
       - "8888:8888"
     environment:
       ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
+    healthcheck:
+      test: "curl --fail --silent http://config-server:8888/actuator/health | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       backend:
         aliases:
@@ -43,7 +67,7 @@ services:
       - "8761:8761"
     depends_on:
       config-server:
-        condition: service_started
+        condition: service_healthy
     networks:
       backend:
         aliases:
@@ -60,8 +84,10 @@ services:
       postgres:
         condition: service_healthy
       config-server:
-        condition: service_started
+        condition: service_healthy
       eureka-server:
+        condition: service_started
+      redis:
         condition: service_started
     networks:
       backend:
@@ -72,10 +98,10 @@ services:
     build: ./organization-service/
     container_name: organization-service
     depends_on:
-#      postgres:
-#        condition: service_healthy
+      postgres:
+        condition: service_healthy
       config-server:
-        condition: service_started
+        condition: service_healthy
       eureka-server:
         condition: service_started
     ports:

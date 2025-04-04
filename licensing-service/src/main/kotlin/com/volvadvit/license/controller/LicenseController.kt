@@ -27,22 +27,9 @@ class LicenseController(private val licenseService: LicenseService) {
 
         val license = licenseService.getLicense(licenseId, organizationId, locale)
 
-        // add HATEOAS links
-        license.add(
-            linkTo(methodOn(LicenseController::class.java)
-                    .getLicense(license.licenseId!!, organizationId, locale))
-                .withSelfRel(),
-            linkTo(methodOn(LicenseController::class.java)
-                    .createLicense(organizationId, license, locale))
-                .withRel("createLicense"),
-            linkTo(methodOn(LicenseController::class.java)
-                    .updateLicense(organizationId, license, locale))
-                .withRel("updateLicense"),
-            linkTo(methodOn(LicenseController::class.java)
-                    .deleteLicense(organizationId, license.licenseId, locale))
-                .withRel("deleteLicense")
+        return ResponseEntity.ok(
+            licenseWithLinks(license, organizationId, locale)
         )
-        return ResponseEntity.ok(license)
     }
 
     @PutMapping
@@ -86,12 +73,25 @@ class LicenseController(private val licenseService: LicenseService) {
         )
     }
 
-    @GetMapping("/{licenseId}/{clientType}")
-    fun getLicenseWithClient(@PathVariable("organizationId") organizationId: String,
-                             @PathVariable("licenseId") licenseId: String?,
-                             @PathVariable("clientType") clientType: String?,
-                             @RequestHeader(value = "Accept-Language",required = false) locale: Locale?
-    ): License {
-        return licenseService.getLicense(organizationId, licenseId, clientType)
+    /**
+     * add HATEOAS links
+     */
+    private fun licenseWithLinks(license: License, organizationId: String, locale: Locale?): License {
+        license.add(
+            linkTo(methodOn(LicenseController::class.java)
+                .getLicense(license.licenseId!!, organizationId, locale))
+                .withSelfRel(),
+            linkTo(methodOn(LicenseController::class.java)
+                .createLicense(organizationId, license, locale))
+                .withRel("createLicense"),
+            linkTo(methodOn(LicenseController::class.java)
+                .updateLicense(organizationId, license, locale))
+                .withRel("updateLicense"),
+            linkTo(methodOn(LicenseController::class.java)
+                .deleteLicense(organizationId, license.licenseId, locale))
+                .withRel("deleteLicense")
+        )
+
+        return license
     }
 }

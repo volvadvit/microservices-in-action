@@ -13,6 +13,8 @@ RUN java -Djarmode=layertools -jar application.jar extract
 
 # Creating new image to combine only required SpringBoot app's layers
 FROM openjdk:17-slim
+# Enable CURL for health-check
+RUN apt-get -y update; apt-get -y install curl
 WORKDIR application
 # Copying unpacked app's layers to container layers
 ARG DEPENDENCY=/target/dependency

@@ -1,3 +1,9 @@
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
 management:
   endpoints:
     web:
@@ -16,4 +22,8 @@ management:
       enabled: true
 
 test:
-  property: Hello world!
+  property: "Value of the test property for comment"
+
+scheduler:
+  interval:
+    millis: 30000

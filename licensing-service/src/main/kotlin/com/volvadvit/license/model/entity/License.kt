@@ -8,6 +8,7 @@ import org.springframework.hateoas.RepresentationModel
 
 @Entity
 @Table(name="licenses")
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 class License(
     @Id
     @Column(name = "license_id", nullable = false)
@@ -26,7 +27,19 @@ class License(
     val productName: String? = null,
 
     @Column(name="comment")
-    var comment: String? = null
+    var comment: String? = null,
+
+    @Transient
+    var organizationName: String? = null,
+
+    @Transient
+    var contactName: String? = null,
+
+    @Transient
+    var contactPhone: String? = null,
+
+    @Transient
+    var contactEmail: String? = null
 ) : RepresentationModel<License>() {
 
     fun withComment(comment: String): License {

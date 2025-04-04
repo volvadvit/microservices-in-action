@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConfigurationProperties(prefix = "test")
-class TestServiceProperties {
+class TestServiceConfigurationProperties {
     lateinit var property: String
 }

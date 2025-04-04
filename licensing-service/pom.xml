@@ -22,6 +22,7 @@
         <kotlin.version>1.9.25</kotlin.version>
         <spring-cloud.version>4.2.1</spring-cloud.version>
         <docker.image.prefix>ostock</docker.image.prefix>
+        <shedlock.spring.version>6.3.1</shedlock.spring.version>
     </properties>
 
     <dependencies>
@@ -52,10 +53,38 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+        <!--Creates Metadata about ConfigurationProperties classes-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <!-- ShedLock -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-redis-spring</artifactId>
+            <version>${shedlock.spring.version}</version>
         </dependency>
 
         <!-- Kotlin -->
