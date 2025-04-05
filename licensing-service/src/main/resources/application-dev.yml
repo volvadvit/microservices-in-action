@@ -1,12 +1,13 @@
 spring:
   application:
     name: licensing-service
+#  profiles:
+#    active: dev
   config:
     import: 'optional:configserver:'
   cloud:
     config:
-      uri: http://${CONFIG_HOST:localhost}:8888
-      name: licensing-service
+      uri: http://config-server:8888
 
 server:
   port: 8081

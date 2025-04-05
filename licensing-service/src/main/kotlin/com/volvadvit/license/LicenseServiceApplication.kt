@@ -7,7 +7,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.openfeign.EnableFeignClients
 
 @SpringBootApplication
-@RefreshScope
 // Enables client-side load balancing
 @EnableDiscoveryClient
 // Enables Netflix Feign clients

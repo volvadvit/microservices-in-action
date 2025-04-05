@@ -9,5 +9,7 @@ interface LicenseRepository: CrudRepository<License, String> {
 
     fun findByOrganizationId(organizationId: String): License?
 
+    fun findAllByOrganizationId(organizationId: String): List<License>
+
     fun findByOrganizationIdAndLicenseId(organizationId: String, licenseId: String): License?
 }

@@ -73,6 +73,11 @@ class LicenseController(private val licenseService: LicenseService) {
         )
     }
 
+    @GetMapping()
+    fun getAllLicensesForOrganization(@PathVariable("organizationId") organizationId: String): ResponseEntity<List<License>> {
+        return ResponseEntity.ok(licenseService.getLicensesByOrganizationId(organizationId))
+    }
+
     /**
      * add HATEOAS links
      */

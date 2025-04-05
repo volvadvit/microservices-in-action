@@ -1,8 +1,25 @@
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/ostock_db
+    username: myuser
+    password: "{cipher}5b93bdffbbca22415e2ae4ba1e34b5e7ee4a0293324c16061dd3f23a0de1db4b"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: false
+    show-sql: true
   cloud:
     loadbalancer:
       ribbon:
         enabled: false
+
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: TRACE
 
 management:
   endpoints:
@@ -10,7 +27,7 @@ management:
       base-path: /
       exposure:
         include: "*"
-    enabled-by-default: false
+    enabled-by-default: true
   endpoint:
     health:
       enabled: true
@@ -20,10 +37,58 @@ management:
       enabled: true
     diskspace:
       enabled: true
+  # For testing only
+  security:
+    enabled: false
 
 test:
   property: "Value of the test property for comment"
+  circuitbreaker.timeout.exception.enabled: true
 
 scheduler:
   interval:
     millis: 30000
+
+eureka:
+  instance:
+    preferIpAddress: true
+  #    instance-id: licensing-service-dev:${random.uuid}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: 6379
+
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        # 'COUNT_BASED' or 'TIME_BASED'. Default 'COUNT_BASED'
+        slidingWindowType: COUNT_BASED
+        # With 'TIME_BASED' - second, with 'COUNT_BASED' - number of requests. Default 100
+        slidingWindowSize: 5
+        # Number of requests to change status from 'HALF_OPEN' to 'CLOSED'. Default 10
+        permittedNumberOfCallsInHalfOpenState: 10
+        # Threshold for time of slow requests. Default 60s
+        slowCallDurationThreshold: 4s
+        # Threshold for number of slow requests. To use with 'slowCallDurationThreshold'. Default 100
+        slowCallRateThreshold: 90
+        # Threshold for number of failed requests. Default 50
+        failureRateThreshold: 2
+        # Time delay before 'OPEN' will be moved to 'HALF_OPEN'
+        waitDurationInOpenState: 10s
+        # Minimum number of calls which are required before the CircuitBreaker can calculate the error rate or slow call rate
+        minimumNumberOfCalls: 5
+    instances:
+      licensingService:
+        baseConfig: default
+        waitDurationInOpenState: 10s
+        registerHealthIndicator: true
+      organizationService:
+        baseConfig: default
+        waitDurationInOpenState: 5s
