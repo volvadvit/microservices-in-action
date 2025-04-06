@@ -73,6 +73,21 @@ services:
         aliases:
           - "eureka-server"
 
+  gateway-service:
+    build: ./gateway-service/
+    container_name: gateway-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    ports:
+      - "8765:8765"
+    networks:
+      backend:
+        aliases:
+          - "gateway-service"
+
   licensing-service:
     build: ./licensing-service/
     container_name: licensing-service
@@ -97,6 +112,8 @@ services:
   organization-service:
     build: ./organization-service/
     container_name: organization-service
+    environment:
+      - "SPRING_PROFILES_ACTIVE=dev"
     depends_on:
       postgres:
         condition: service_healthy

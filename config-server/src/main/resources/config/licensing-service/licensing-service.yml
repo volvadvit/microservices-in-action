@@ -92,3 +92,36 @@ resilience4j:
       organizationService:
         baseConfig: default
         waitDurationInOpenState: 5s
+  bulkhead:
+    instances:
+      bulkheadLicenseService:
+        # Time of blocking thread in bulkhead. Default '0'
+        maxWaitDuration: 10ms
+        # Default '25'
+        maxConcurrentCalls: 20
+  thread-pool-bulkhead:
+    instances:
+      bulkheadLicenseService:
+        # Max number of threads in thread-pool. Default 'Runtime.getRuntime().AvailableProcessors()'
+        maxThreadPoolSize: 1
+        coreThreadPoolSize: 1
+        # Default '100'
+        queueCapacity: 1
+        # Max time while not busy thread will wait for new task before close (for number of threads > core size)
+        keepAliveDuration: 20ms
+  retry:
+    instances:
+      retryLicenseService:
+        maxRetryAttempt: 5
+        # Delay. Default '500' ms
+        waitDuration: 10000
+        retry-exceptions:
+          - java.util.concurrent.TimeoutException
+  ratelimiter:
+    instances:
+      licenseService:
+        # Time while thread is waiting for permission
+        timeoutDuration: 10s
+        limitRefreshPeriod: 5s
+        # Max number of threads within 'limitRefreshPeriod'
+        limitForPeriod: 5

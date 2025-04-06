@@ -2,6 +2,8 @@ package com.volvadvit.license.controller
 
 import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.service.LicenseService
+import com.volvadvit.license.utils.filter.UserContextHolder
+import org.slf4j.LoggerFactory
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.http.ResponseEntity
@@ -20,10 +22,14 @@ import java.util.Locale
 @RequestMapping("v1/organization/{organizationId}/license")
 class LicenseController(private val licenseService: LicenseService) {
 
+    private val logger = LoggerFactory.getLogger(LicenseController::class.java)
+
     @GetMapping("/{licenseId}")
     fun getLicense(@PathVariable("licenseId") licenseId: String,
                    @PathVariable("organizationId") organizationId: String,
                    @RequestHeader(value = "Accept-Language",required = false) locale: Locale?): ResponseEntity<License> {
+
+        logger.info("LicenseServiceController Correlation id: ${UserContextHolder.getContext()?.correlationId}")
 
         val license = licenseService.getLicense(licenseId, organizationId, locale)
 
@@ -75,6 +81,7 @@ class LicenseController(private val licenseService: LicenseService) {
 
     @GetMapping()
     fun getAllLicensesForOrganization(@PathVariable("organizationId") organizationId: String): ResponseEntity<List<License>> {
+        logger.info("LicenseServiceController Correlation id: ${UserContextHolder.getContext()?.correlationId}")
         return ResponseEntity.ok(licenseService.getLicensesByOrganizationId(organizationId))
     }
 

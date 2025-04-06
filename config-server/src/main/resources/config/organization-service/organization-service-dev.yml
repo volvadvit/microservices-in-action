@@ -1,21 +1,8 @@
 eureka:
-  instance:
-    preferIpAddress: true
   client:
-    registerWithEureka: true
-    # Client will store local copy of registry info (for load balancing on the client side)
-    fetchRegistry: true
     serviceUrl:
       defaultZone: http://eureka-server:8761/eureka/
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://postgres:5432/ostock_db
-    username: myuser
-    password: "{cipher}5b93bdffbbca22415e2ae4ba1e34b5e7ee4a0293324c16061dd3f23a0de1db4b"
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    generate-ddl: false
-    show-sql: true

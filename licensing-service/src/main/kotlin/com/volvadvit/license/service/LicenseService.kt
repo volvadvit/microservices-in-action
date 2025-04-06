@@ -5,7 +5,12 @@ import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.model.entity.Organization
 import com.volvadvit.license.repository.LicenseRepository
 import com.volvadvit.license.service.client.OrganizationFeignClientStrategy
+import com.volvadvit.license.utils.filter.UserContextHolder
+import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter
+import io.github.resilience4j.retry.annotation.Retry
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.MessageSource
@@ -19,10 +24,10 @@ class LicenseService(
     private val messages: MessageSource,
     private val licenseRepository: LicenseRepository,
     private val config: TestServiceConfigurationProperties,
-    private val organizationClient: OrganizationFeignClientStrategy
+    private val organizationClient: OrganizationFeignClientStrategy,
+    @Value("\${test.circuitbreaker.timeout.exception.enabled}") val circuitBreakerToggle: Boolean
 ) {
-    @Value("\${test.circuitbreaker.timeout.exception.enabled}")
-    var circuitBreakerToggle: Boolean = false
+    private val logger = LoggerFactory.getLogger(LicenseService::class.java)
 
     fun getLicense(licenseId: String?, organizationId: String?, locale: Locale?): License {
         val license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId!!, licenseId!!) ?:
@@ -44,8 +49,12 @@ class LicenseService(
         return license.withComment(config.property)
     }
 
-    @CircuitBreaker(name = "licensingService")
+    @CircuitBreaker(name = "licensingService", fallbackMethod = "buildFallbackLicenseList")
+    @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+    @Retry(name = "retryLicenseService", fallbackMethod="buildFallbackLicenseList")
+    @Bulkhead(name= "bulkheadLicenseService", type = Bulkhead.Type.THREADPOOL, fallbackMethod= "buildFallbackLicenseList")
     fun getLicensesByOrganizationId(organizationId: String): List<License> {
+        logger.info("getLicensesByOrganization Correlation id: ${UserContextHolder.getContext()?.correlationId}")
         throwTimeoutExceptionIfNeeded()
         return licenseRepository.findAllByOrganizationId(organizationId)
     }
@@ -104,5 +113,18 @@ class LicenseService(
         } catch (ex: InterruptedException) {
             System.err.println(ex.message)
         }
+    }
+
+    private fun buildFallbackLicenseList(organizationId: String, throwable: Throwable): List<License> {
+        logger.warn("Catching failed request to datasource: ${throwable.message}")
+
+        val licenseList = ArrayList<License>()
+        val sampleLicense = License(
+            licenseId = "0000-00000-0000-0000",
+            organizationId = organizationId,
+            productName = "Sorry no licensing information currently available")
+
+        licenseList.add(sampleLicense)
+        return licenseList
     }
 }
