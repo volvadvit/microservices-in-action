@@ -27,5 +27,6 @@ spring:
       discovery:
         locator:
           # Let Gateway discover routes via discovery service (Eureka registry)
+          # .../actuator/gateway/routes
           enabled: true
           lowerCaseServiceId: true

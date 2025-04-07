@@ -1,4 +1,4 @@
-package com.volvadvit.license.utils.filter
+package com.volvadvit.license.filter
 
 import org.springframework.util.Assert
 

@@ -1,4 +1,4 @@
-package com.volvadvit.license.utils.filter
+package com.volvadvit.license.filter
 
 import com.volvadvit.license.utils.AUTH_TOKEN
 import com.volvadvit.license.utils.CORRELATION_ID

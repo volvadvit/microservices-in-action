@@ -5,7 +5,7 @@ import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.model.entity.Organization
 import com.volvadvit.license.repository.LicenseRepository
 import com.volvadvit.license.service.client.OrganizationFeignClientStrategy
-import com.volvadvit.license.utils.filter.UserContextHolder
+import com.volvadvit.license.filter.UserContextHolder
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter

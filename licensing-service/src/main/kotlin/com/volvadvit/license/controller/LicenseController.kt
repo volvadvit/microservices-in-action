@@ -2,7 +2,7 @@ package com.volvadvit.license.controller
 
 import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.service.LicenseService
-import com.volvadvit.license.utils.filter.UserContextHolder
+import com.volvadvit.license.filter.UserContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
