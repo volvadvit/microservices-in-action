@@ -1,4 +1,4 @@
-package com.volvadvit.organization_service
+package com.volvadvit.organization
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

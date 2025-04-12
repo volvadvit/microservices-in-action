@@ -1,7 +1,7 @@
-package com.volvadvit.organization_service.service
+package com.volvadvit.organization.service
 
-import com.volvadvit.organization_service.model.Organization
-import com.volvadvit.organization_service.repository.OrganizationRepository
+import com.volvadvit.organization.model.Organization
+import com.volvadvit.organization.repository.OrganizationRepository
 import org.springframework.stereotype.Service
 import java.util.Optional
 import java.util.UUID

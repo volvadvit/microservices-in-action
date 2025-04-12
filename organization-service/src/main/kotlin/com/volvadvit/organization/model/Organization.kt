@@ -1,4 +1,4 @@
-package com.volvadvit.organization_service.model
+package com.volvadvit.organization.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

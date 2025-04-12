@@ -3,21 +3,27 @@ services:
     image: quay.io/keycloak/keycloak:24.0
     container_name: keycloak
     environment:
-      KC_HOSTNAME: localhost
+      # Value of the "iss" property from a JWT token.
+      # Must be changed to "localhost" to access UI-console but additional bridge required: https://medium.com/@kostapchuk/integrating-keycloak-with-spring-boot-in-a-dockerized-environment-813eab1f140c
+      # Or we can just add "127.0.0.1 keycloak" to the "hosts" and open it with "http://keycloak:7080/auth"
+      KC_HOSTNAME: keycloak
       KC_HOSTNAME_PORT: 7080
       KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: nimda
       KC_HEALTH_ENABLED: "true"
       KC_LOG_LEVEL: info
+    command: [ "start-dev", "--import-realm", "--http-port", "7080", "--https-port", "7443" ]
     volumes:
       - './keycloak/import:/opt/keycloak/data/import'
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:7080/health/ready" ]
-      interval: 15s
+      #TODO fix health-check
+#      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost:9000\r\nConnection: close\r\n\r\n' >&3;cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1" ]
+      test: "curl --fail --silent http://keycloak:7080/health/ready | grep 'UP' || exit 1"
+      interval: 5s
       timeout: 2s
-      retries: 15
-    command: [ "start-dev", "--import-realm", "--http-port", "7080", "--https-port", "7443" ]
+      retries: 30
+      start_period: 20s
     ports:
       - "7080:7080"
       - "7443:7443"
@@ -57,9 +63,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-#    volumes:
-#      - ./redis/dаta:/root/redis
-#      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_PASSWORD=mypassword
       - REDIS_PORT=6379
@@ -142,6 +145,9 @@ services:
     environment:
       - "SPRING_PROFILES_ACTIVE=dev"
     depends_on:
+      keycloak:
+        #TODO change to 'service_healthy'
+        condition: service_started
       postgres:
         condition: service_healthy
       config-server:

@@ -20,29 +20,31 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
         <kotlin.version>1.9.25</kotlin.version>
-        <spring-cloud.version>4.2.1</spring-cloud.version>
+        <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <keycloak.version>25.0.3</keycloak.version>
         <docker.image.prefix>ostock</docker.image.prefix>
     </properties>
 
     <dependencies>
-        <!-- Spring -->
+        <!-- Spring Web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring Actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- Spring Config Client-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-            <version>${spring-cloud.version}</version>
         </dependency>
+        <!-- Spring Eureka Client-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-            <version>${spring-cloud.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.netflix.ribbon</groupId>
@@ -50,9 +52,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Spring Data JPA-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- Spring OAuth2 Resource Server-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <!-- Spring Security-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <!-- PostgreSQL Driver -->
@@ -76,6 +89,19 @@
             <artifactId>kotlin-reflect</artifactId>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>

@@ -4,14 +4,11 @@ server:
 management:
   endpoints:
     web:
-      base-path: /
       exposure:
-        include: "*"
+        include: '*'
   # For testing only
   security:
     enabled: false
-
-
 
 eureka:
   instance:
@@ -34,3 +31,19 @@ spring:
       ddl-auto: validate
     generate-ddl: false
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${KEYCLOAK_HOST:localhost}:7080/realms/organizations-realm
+          # to start it independently
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+logging:
+  level:
+    root: DEBUG
+    org:
+      springframework.web: DEBUG
+#      hibernate: ERROR
+  pattern:
+    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
