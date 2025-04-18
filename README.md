@@ -27,17 +27,29 @@ ___
 ___
 **Get OAuth2 Token**
  -
-POST: http://localhost:7080/realms/organizations-realm/protocol/openid-connect/token \
-x-www-form-urlencoded:
- - grant_type: password
- - username: <keycloak_any_user_username>
- - password: <keycloak_any_user_password>
+1. **For service:**\
+    POST: http://localhost:7080/realms/organizations-realm/protocol/openid-connect/token \
+    x-www-form-urlencoded:
+    - grant_type: client_credentials
+    - client_id: ostock
+    - client_secret: DhzOq8bhc4wnpJsxQcGSFwH9lReNZFEt
 
-**Authorization Header:** Basic Auth:
- - Username: ostock
- - Password: DhzOq8bhc4wnpJsxQcGSFwH9lReNZFEt
+    **Authorization Header:** Basic Auth:
+    - Username: ostock
+    - Password: DhzOq8bhc4wnpJsxQcGSFwH9lReNZFEt\
+
+2. **For user:**\
+    POST: http://localhost:7080/realms/organizations-realm/protocol/openid-connect/token \
+    x-www-form-urlencoded:
+    - grant_type: password
+    - username: <keycloak_any_user_username>  (create new users with `ostock-admin` or `ostock-user` realm roles)
+    - password: <keycloak_any_user_password>
+    
+    **Authorization Header:** Basic Auth:
+    - Username: ostock
+    - Password: DhzOq8bhc4wnpJsxQcGSFwH9lReNZFEt
 ___
 API examples
 -
- - Get License by organization's & license's ID: http://localhost:8765/licensing-service/v1/organization/d898a142-de44-466c-8c88-9ceb2c2429d3/license/f2a9c9d4-d2c0-44fa-97fe-724d77173c62
- - Get Organization by ID: http://localhost:8765/organization-service/v1/organization/d898a142-de44-466c-8c88-9ceb2c2429d3
+ - Get License by organization's & license's ID (oauth2 token required): http://localhost:8765/licensing-service/v1/organization/d898a142-de44-466c-8c88-9ceb2c2429d3/license/f2a9c9d4-d2c0-44fa-97fe-724d77173c62
+ - Get Organization by ID (oauth2 token required): http://localhost:8765/organization-service/v1/organization/d898a142-de44-466c-8c88-9ceb2c2429d3

@@ -35,7 +35,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://${KEYCLOAK_HOST:localhost}:7080/realms/organizations-realm
+          issuer-uri: http://${KEYCLOAK_HOST:keycloak}:7080/realms/organizations-realm
           # to start it independently
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 

@@ -4,7 +4,7 @@ import com.volvadvit.license.config.TestServiceConfigurationProperties
 import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.model.entity.Organization
 import com.volvadvit.license.repository.LicenseRepository
-import com.volvadvit.license.service.client.OrganizationFeignClientStrategy
+import com.volvadvit.license.client.OrganizationFeignClientStrategy
 import com.volvadvit.license.filter.UserContextHolder
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
@@ -29,7 +29,7 @@ class LicenseService(
 ) {
     private val logger = LoggerFactory.getLogger(LicenseService::class.java)
 
-    fun getLicense(licenseId: String?, organizationId: String?, locale: Locale?): License {
+    fun getLicense(licenseId: String?, organizationId: String?, oauthToken: String?, locale: Locale?): License {
         val license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId!!, licenseId!!) ?:
         throw IllegalArgumentException(
             String.format(
@@ -38,7 +38,7 @@ class LicenseService(
             )
         )
 
-        val organization = retrieveOrganizationInfo(organizationId)
+        val organization = retrieveOrganizationInfo(oauthToken, organizationId)
         organization?.let {
             license.organizationName = organization.name
             license.contactName = organization.contactName
@@ -91,9 +91,9 @@ class LicenseService(
     }
 
     @CircuitBreaker(name = "organizationService")
-    private fun retrieveOrganizationInfo(organizationId: String?): Organization? {
+    private fun retrieveOrganizationInfo(oauthToken: String?, organizationId: String?): Organization? {
         if (organizationId != null) {
-            return organizationClient.getOrganization(organizationId)
+            return organizationClient.getOrganization(oauthToken, organizationId)
         } else {
             throw IllegalArgumentException("Wrong input arguments for organizationId or clientType")
         }

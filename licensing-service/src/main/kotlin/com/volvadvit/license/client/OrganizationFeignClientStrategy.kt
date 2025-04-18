@@ -1,9 +1,10 @@
-package com.volvadvit.license.service.client
+package com.volvadvit.license.client
 
 import com.volvadvit.license.model.entity.Organization
 import com.volvadvit.license.utils.ORGANIZATION_SERVICE_GET_ORGANIZATION_END_POINT
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
@@ -15,5 +16,5 @@ interface OrganizationFeignClientStrategy {
         value = [ORGANIZATION_SERVICE_GET_ORGANIZATION_END_POINT],
         consumes = ["application/json"]
     )
-    fun getOrganization(@PathVariable("organizationId") organizationId: String): Organization?
+    fun getOrganization(@RequestHeader("Authorization") oauthToken: String?, @PathVariable("organizationId") organizationId: String): Organization?
 }

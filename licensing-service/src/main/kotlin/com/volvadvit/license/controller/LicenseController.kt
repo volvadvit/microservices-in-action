@@ -1,11 +1,11 @@
 package com.volvadvit.license.controller
 
+import com.volvadvit.license.filter.UserContextHolder
 import com.volvadvit.license.model.entity.License
 import com.volvadvit.license.service.LicenseService
-import com.volvadvit.license.filter.UserContextHolder
 import org.slf4j.LoggerFactory
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.Locale
+import java.util.*
 
 @RestController
 @RequestMapping("v1/organization/{organizationId}/license")
@@ -27,14 +27,15 @@ class LicenseController(private val licenseService: LicenseService) {
     @GetMapping("/{licenseId}")
     fun getLicense(@PathVariable("licenseId") licenseId: String,
                    @PathVariable("organizationId") organizationId: String,
+                   @RequestHeader(value = "Authorization", required = false) oauthToken: String?,
                    @RequestHeader(value = "Accept-Language",required = false) locale: Locale?): ResponseEntity<License> {
 
         logger.info("LicenseServiceController Correlation id: ${UserContextHolder.getContext()?.correlationId}")
 
-        val license = licenseService.getLicense(licenseId, organizationId, locale)
+        val license = licenseService.getLicense(licenseId, organizationId, oauthToken, locale)
 
         return ResponseEntity.ok(
-            licenseWithLinks(license, organizationId, locale)
+            licenseWithLinks(license, organizationId, oauthToken, locale)
         )
     }
 
@@ -88,10 +89,10 @@ class LicenseController(private val licenseService: LicenseService) {
     /**
      * add HATEOAS links
      */
-    private fun licenseWithLinks(license: License, organizationId: String, locale: Locale?): License {
+    private fun licenseWithLinks(license: License, organizationId: String, oauthToken: String?, locale: Locale?): License {
         license.add(
             linkTo(methodOn(LicenseController::class.java)
-                .getLicense(license.licenseId!!, organizationId, locale))
+                .getLicense(license.licenseId!!, organizationId, oauthToken, locale))
                 .withSelfRel(),
             linkTo(methodOn(LicenseController::class.java)
                 .createLicense(organizationId, license, locale))
