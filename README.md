@@ -21,8 +21,9 @@ ___
    - Required '127.0.0.1 keycloak' host mapping 
    - UI console auth: _admin_, _nimda_ 
    - Used for `organization-service`
- - PostgreSQL: http://localhost:5432
- - Redis: http://localhost:6379
+ - PostgreSQL: http://localhost:5432 (`organization-service`, `licensing-service`)
+ - Redis: http://localhost:6379 (`ShedLock`)
+ - For study purposes: Resilience4j (CircuitBreaker, RateLimiter, Retry)
 ___
 **Get OAuth2 Token**
  -
