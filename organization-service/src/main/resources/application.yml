@@ -6,3 +6,13 @@ spring:
   cloud:
     config:
       uri: http://${CONFIG_HOST:localhost}:8888
+    stream:
+      function:
+        # to create beans
+        definition: process;publish
+      bindings:
+        # <method_name>-<in>/<out>-<index>
+        publish-out-0:
+          destination: my_publish_topic
+        consume-in-0:
+          destination: my_polling_topic

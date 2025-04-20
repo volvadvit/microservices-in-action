@@ -27,15 +27,14 @@ class LicenseController(private val licenseService: LicenseService) {
     @GetMapping("/{licenseId}")
     fun getLicense(@PathVariable("licenseId") licenseId: String,
                    @PathVariable("organizationId") organizationId: String,
-                   @RequestHeader(value = "Authorization", required = false) oauthToken: String?,
                    @RequestHeader(value = "Accept-Language",required = false) locale: Locale?): ResponseEntity<License> {
 
         logger.info("LicenseServiceController Correlation id: ${UserContextHolder.getContext()?.correlationId}")
 
-        val license = licenseService.getLicense(licenseId, organizationId, oauthToken, locale)
+        val license = licenseService.getLicense(licenseId, organizationId, locale)
 
         return ResponseEntity.ok(
-            licenseWithLinks(license, organizationId, oauthToken, locale)
+            licenseWithLinks(license, organizationId, locale)
         )
     }
 
@@ -89,10 +88,10 @@ class LicenseController(private val licenseService: LicenseService) {
     /**
      * add HATEOAS links
      */
-    private fun licenseWithLinks(license: License, organizationId: String, oauthToken: String?, locale: Locale?): License {
+    private fun licenseWithLinks(license: License, organizationId: String, locale: Locale?): License {
         license.add(
             linkTo(methodOn(LicenseController::class.java)
-                .getLicense(license.licenseId!!, organizationId, oauthToken, locale))
+                .getLicense(license.licenseId!!, organizationId, locale))
                 .withSelfRel(),
             linkTo(methodOn(LicenseController::class.java)
                 .createLicense(organizationId, license, locale))

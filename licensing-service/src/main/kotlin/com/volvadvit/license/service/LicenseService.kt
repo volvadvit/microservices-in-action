@@ -29,7 +29,7 @@ class LicenseService(
 ) {
     private val logger = LoggerFactory.getLogger(LicenseService::class.java)
 
-    fun getLicense(licenseId: String?, organizationId: String?, oauthToken: String?, locale: Locale?): License {
+    fun getLicense(licenseId: String?, organizationId: String?, locale: Locale?): License {
         val license = licenseRepository.findByOrganizationIdAndLicenseId(organizationId!!, licenseId!!) ?:
         throw IllegalArgumentException(
             String.format(
@@ -38,7 +38,7 @@ class LicenseService(
             )
         )
 
-        val organization = retrieveOrganizationInfo(oauthToken, organizationId)
+        val organization = retrieveOrganizationInfo(organizationId)
         organization?.let {
             license.organizationName = organization.name
             license.contactName = organization.contactName
@@ -54,7 +54,7 @@ class LicenseService(
     @Retry(name = "retryLicenseService", fallbackMethod="buildFallbackLicenseList")
     @Bulkhead(name= "bulkheadLicenseService", type = Bulkhead.Type.THREADPOOL, fallbackMethod= "buildFallbackLicenseList")
     fun getLicensesByOrganizationId(organizationId: String): List<License> {
-        logger.info("getLicensesByOrganization Correlation id: ${UserContextHolder.getContext()?.correlationId}")
+        logger.info("getLicensesByOrganization Correlation id: ${UserContextHolder.getContext().correlationId}")
         throwTimeoutExceptionIfNeeded()
         return licenseRepository.findAllByOrganizationId(organizationId)
     }
@@ -91,9 +91,11 @@ class LicenseService(
     }
 
     @CircuitBreaker(name = "organizationService")
-    private fun retrieveOrganizationInfo(oauthToken: String?, organizationId: String?): Organization? {
+    private fun retrieveOrganizationInfo(organizationId: String?): Organization? {
         if (organizationId != null) {
-            return organizationClient.getOrganization(oauthToken, organizationId)
+            val oauthTokenFromRequest = UserContextHolder.getContext().authToken
+            val correlationId = UserContextHolder.getContext().correlationId
+            return organizationClient.getOrganization(oauthTokenFromRequest, correlationId, organizationId)
         } else {
             throw IllegalArgumentException("Wrong input arguments for organizationId or clientType")
         }

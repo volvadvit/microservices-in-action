@@ -3,6 +3,7 @@ package com.volvadvit.organization.controller
 import com.volvadvit.organization.model.Organization
 import com.volvadvit.organization.service.OrganizationService
 import jakarta.annotation.security.RolesAllowed
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,9 +13,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value= ["v1/organization"])
 class OrganizationController(private val service: OrganizationService) {
 
+    private val logger = LoggerFactory.getLogger(OrganizationController::class.java)
+
     @RolesAllowed("ADMIN", "USER")
     @GetMapping(value = ["/{organizationId}"])
-    fun getOrganization(@PathVariable("organizationId") organizationId: String?): ResponseEntity<Organization> {
+    fun getOrganization(@PathVariable("organizationId") organizationId: String?,
+                        @RequestHeader(value = "tmx-correlation-id", required = false) correlationId: String?
+    ): ResponseEntity<Organization> {
+        logger.info("getOrganization Correlation id: $correlationId")
         return ResponseEntity.ok(service.findById(organizationId))
     }
 

@@ -7,14 +7,14 @@ class UserContextHolder {
     companion object {
         private val userContext: ThreadLocal<UserContext?> = ThreadLocal<UserContext?>()
 
-        fun getContext(): UserContext? {
+        fun getContext(): UserContext {
             var context: UserContext? = userContext.get()
 
             if (context == null) {
                 context = createEmptyContext()
                 userContext.set(context)
             }
-            return userContext.get()
+            return context
         }
 
         fun setContext(context: UserContext?) {

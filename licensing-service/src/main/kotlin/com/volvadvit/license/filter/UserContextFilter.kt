@@ -1,6 +1,6 @@
 package com.volvadvit.license.filter
 
-import com.volvadvit.license.utils.AUTH_TOKEN
+import com.volvadvit.license.utils.AUTHORIZATION
 import com.volvadvit.license.utils.CORRELATION_ID
 import com.volvadvit.license.utils.ORGANIZATION_ID
 import com.volvadvit.license.utils.USER_ID
@@ -20,12 +20,12 @@ class UserContextFilter: Filter {
     override fun doFilter(servletRequest: ServletRequest?, servletResponse: ServletResponse?, filterChain: FilterChain?) {
         val httpServletRequest = servletRequest as HttpServletRequest
 
-        UserContextHolder.getContext()?.correlationId = httpServletRequest.getHeader(CORRELATION_ID)
-        UserContextHolder.getContext()?.userId = httpServletRequest.getHeader(USER_ID)
-        UserContextHolder.getContext()?.authToken = httpServletRequest.getHeader(AUTH_TOKEN)
-        UserContextHolder.getContext()?.organizationId = httpServletRequest.getHeader(ORGANIZATION_ID)
+        UserContextHolder.getContext().correlationId = httpServletRequest.getHeader(CORRELATION_ID)
+        UserContextHolder.getContext().userId = httpServletRequest.getHeader(USER_ID)
+        UserContextHolder.getContext().authToken = httpServletRequest.getHeader(AUTHORIZATION)
+        UserContextHolder.getContext().organizationId = httpServletRequest.getHeader(ORGANIZATION_ID)
 
-        logger.info("UserContextFilter Correlation id: ${UserContextHolder.getContext()?.correlationId}")
+        logger.info("UserContextFilter Correlation id: ${UserContextHolder.getContext().correlationId}")
 
         filterChain?.doFilter(httpServletRequest, servletResponse)
     }
